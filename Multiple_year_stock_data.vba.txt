@@ -1,0 +1,136 @@
+Sub testData():
+
+Dim i As Single
+
+Dim tickerCount As Long
+Dim totalVolume As Double
+Dim yearlyBeginning As Double
+Dim yearlyEnding As Double
+Dim yearlyChange As Double
+Dim percentChange As Double
+'to get the count of the loops
+Dim counter As Double
+Dim percentIncreaseValue As Double
+'percentIncreaseValue
+Dim percentDecreaseValue As Double
+Dim greatestTotalVolume As Double
+'greatestTotalVolume
+Dim increaseTicker As String
+Dim lastRowOfK As Double
+
+
+
+For Each ws In Worksheets
+counter = 0
+'position to place the name of the ticker
+tickerCount = 2
+totalVolume = 0
+'Display the column headings
+    ws.Cells(1, 9).Value = "Ticker"
+    ws.Cells(1, 12).Value = "Total Stock Volume"
+    ws.Cells(1, 10).Value = "Yearly Change"
+    ws.Cells(1, 11).Value = "Percent Change"
+    ws.Cells(1, 15).Value = "Ticker"
+    ws.Cells(1, 16).Value = "Value"
+    ws.Cells(2, 14).Value = "Greatest % Increase"
+    ws.Cells(3, 14).Value = "Greatest % Decrease"
+    ws.Cells(4, 14).Value = "Greatest Total Volume"
+    LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+    
+    For i = 2 To LastRow
+    'Get the next ticker value as well as total Volume and Yearly Change
+        If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+            totalVolume = totalVolume + ws.Cells(i, 7).Value
+            ws.Cells(tickerCount, 9).Value = ws.Cells(i, 1).Value
+            ws.Cells(tickerCount, 12).Value = totalVolume
+            yearlyBeginning = ws.Cells(i - counter, 3).Value
+            yearlyEnding = ws.Cells(i, 6).Value
+            'MsgBox (yearlyEnding)
+            yearlyChange = yearlyEnding - yearlyBeginning
+            ws.Cells(tickerCount, 10).Value = yearlyChange
+            If yearlyBeginning = 0 Then
+            percentChange = 0
+            Else
+            percentChange = (yearlyChange / yearlyBeginning) * 100
+            End If
+            ws.Cells(tickerCount, 11).Value = percentChange
+            'increment tickerCount
+            tickerCount = tickerCount + 1
+            'reset totalVolume and the counter
+            totalVolume = 0
+            counter = 0
+        Else: totalVolume = totalVolume + ws.Cells(i, 7).Value
+        'count the loops, to help calculate the position of the first changed ticker
+              counter = counter + 1
+              
+        End If
+        
+    
+    Next i
+    
+    lastRowOfK = ws.Range("A1").End(xlDown).Row
+    For i = 2 To lastRowOfK
+    If ws.Cells(i, 10).Value < 0 Then
+           ws.Cells(i, 10).Interior.ColorIndex = 3
+    ElseIf ws.Cells(i, 10).Value > 0 Then
+         ws.Cells(i, 10).Interior.ColorIndex = 4
+    ElseIf ws.Cells(1, 10).Value = Null Then
+    
+    
+    End If
+    
+    Next i
+       
+
+        percentIncreaseValue = ws.Cells(2, 11).Value
+         For i = 3 To lastRowOfK
+            If ws.Cells(i, 11).Value >= percentIncreaseValue Then
+            percentIncreaseValue = ws.Cells(i, 11).Value
+            increaseTicker = ws.Cells(i, 9).Value
+            Else
+            End If
+        Next i
+        ws.Cells(2, 16).Value = percentIncreaseValue
+        ws.Cells(2, 15).Value = increaseTicker
+        
+        percentDecreaseValue = ws.Cells(2, 11).Value
+         For i = 3 To lastRowOfK
+            If ws.Cells(i, 11).Value <= percentDecreaseValue Then
+            percentDecreaseValue = ws.Cells(i, 11).Value
+            increaseTicker = ws.Cells(i, 9).Value
+            Else
+            End If
+         Next i
+        ws.Cells(3, 16).Value = percentDecreaseValue
+        ws.Cells(3, 15).Value = increaseTicker
+        
+        greatestTotalVolume = ws.Cells(2, 12).Value
+         For i = 3 To lastRowOfK
+            If ws.Cells(i, 12).Value >= greatestTotalVolume Then
+            percentIncreaseValue = ws.Cells(i, 12).Value
+            increaseTicker = ws.Cells(i, 9).Value
+            Else
+            End If
+         Next i
+        ws.Cells(4, 16).Value = percentIncreaseValue
+        ws.Cells(4, 15).Value = increaseTicker
+        
+        
+        
+        
+        
+        
+        
+Next ws
+
+
+
+
+
+
+
+End Sub
+
+
+
+
